@@ -60,21 +60,3 @@ if not all_scraped_products:
     print("Scraping failed. Jumia rendered a CAPTCHA challenge page.")
     exit()
 
-# Fetch Exchange Rate (KES to USD)
-try:
-    api_res = requests.get(
-        "https://open.er-api.com/v6/latest/KES", timeout=10
-    ).json()
-    kes_to_usd = api_res["rates"]["USD"]
-except Exception:
-    kes_to_usd = 0.0077  # Fallback exchange rate
-
-# Process Data
-df = pd.DataFrame(all_scraped_products)
-df["price_USD"] = (df["price_KES"] * kes_to_usd).round(2)
-
-print("\n--- Scraped Jumia Products ---")
-print(df.to_string(index=False))
-
-df.to_csv("jumia_products.csv", index=False)
-print("\nSaved output to 'jumia_products.csv'")
